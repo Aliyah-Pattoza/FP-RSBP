@@ -5,7 +5,6 @@ from config import df_places
 
 router = APIRouter()
 
-# Definisikan model untuk input data
 class RecommendRequest(BaseModel):
     user_location: str
     max_budget: int
