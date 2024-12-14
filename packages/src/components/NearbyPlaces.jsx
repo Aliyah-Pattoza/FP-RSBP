@@ -5,17 +5,42 @@ const NearbyPlaces = () => {
   const [city, setCity] = useState('');
   const [age, setAge] = useState('');
   const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    apiClient
-      .post('/near/places/near', { city, age: parseInt(age) })
-      .then((response) => {
-        setPlaces(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching nearby places:', error);
+
+    // Validasi input
+    if (!city.trim()) {
+      alert('Mohon masukkan kota Anda.');
+      return;
+    }
+    if (!age || isNaN(age) || age <= 0) {
+      alert('Usia harus berupa angka positif.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Mengirim request POST ke endpoint
+      const response = await apiClient.post('/near/places/near', {
+        city,
+        age: parseInt(age),
       });
+
+      // Menyimpan data yang diterima
+      if (response.data && response.data.length > 0) {
+        setPlaces(response.data);
+      } else {
+        alert('Tidak ada tempat wisata terdekat ditemukan.');
+        setPlaces([]);
+      }
+    } catch (error) {
+      console.error('Error fetching nearby places:', error);
+      alert('Terjadi masalah saat mengambil data dari server.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,29 +64,33 @@ const NearbyPlaces = () => {
         <button type="submit">Cari</button>
       </form>
 
-      {places.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Place Name</th>
-              <th>City</th>
-              <th>Rating</th>
-              <th>Popularity Rank</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {places.map((place, index) => (
-              <tr key={index}>
-                <td>{place.Place_Name}</td>
-                <td>{place.City}</td>
-                <td>{place.Rating}</td>
-                <td>{place.Popularity_Rank}</td>
-                <td>{place.Description}</td>
+      {loading ? (
+        <p>Sedang memuat data...</p>
+      ) : (
+        places.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Tempat</th>
+                <th>Kota</th>
+                <th>Rating</th>
+                <th>Ranking Popularitas</th>
+                <th>Deskripsi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {places.map((place, index) => (
+                <tr key={index}>
+                  <td>{place.Place_Name}</td>
+                  <td>{place.City}</td>
+                  <td>{place.Rating}</td>
+                  <td>{place.Popularity_Rank}</td>
+                  <td>{place.Description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
       )}
     </div>
   );

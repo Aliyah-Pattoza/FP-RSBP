@@ -65,8 +65,7 @@ const Recommendations = () => {
 
   return (
     <div>
-      <h1>FP-RSBP Tourism</h1>
-      <h2>Rekomendasi Wisata</h2>
+      <h1>Rekomendasi Wisata</h1>
       <form onSubmit={handleSearch}>
         <input
           type="text"

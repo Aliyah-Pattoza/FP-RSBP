@@ -16,7 +16,7 @@ function App() {
     <div>
       <nav className="navbar">
         <a href="#" className="navbar-brand">
-          FP-RSBP Tourism
+          Tourism Recommendations
         </a>
         <div className="navbar-menu">
           <button
