@@ -1,10 +1,6 @@
 import gradio as gr
 from config import *
 
-# Menampilkan Pola Preferensi Wisata Berdasarkan Kelompok Usia
-# def display_preference():
-#     return category_ratings.sort_values(['Age_Group', 'Category']).reset_index(drop=True)
-
 # Fungsi untuk Rekomendasi Tempat Wisata
 def place_popularity_all():
     place_popularity_all = merged_places_rating.groupby(['Place_Name']).agg(
@@ -13,15 +9,25 @@ def place_popularity_all():
         Description=('Description', 'first'),
         City=('City', 'first'),
     ).reset_index()
-    return place_popularity_all[['Place_Name', 'City', 'Rating', 'Description', 'Total_Visits']].sort_values(['Rating', 'Total_Visits'], ascending=False).head(10)
-
+    return place_popularity_all[['Place_Name', 'City', 'Rating', 'Description', 'Total_Visits']].sort_values(
+        ['Rating', 'Total_Visits'], ascending=False
+    )
+    
+# Fungsi untuk Rekomendasi Tempat Wisata
 def personalized_recommendation(user_location, max_budget, min_rating, preferred_categories):
-    filtered_places = df_places[
-        (df_places['City'] == user_location) &
-        (df_places['Price'] <= max_budget) &
-        (df_places['Rating'] >= min_rating) &
-        (df_places['Category'].isin(preferred_categories))
-    ]
+    if "All" in preferred_categories:
+        filtered_places = df_places[
+            (df_places['City'] == user_location) &
+            (df_places['Price'] <= max_budget) &
+            (df_places['Rating'] >= min_rating)
+        ]
+    else:
+        filtered_places = df_places[
+            (df_places['City'] == user_location) &
+            (df_places['Price'] <= max_budget) &
+            (df_places['Rating'] >= min_rating) &
+            (df_places['Category'].isin(preferred_categories))
+        ]
     return filtered_places[['Place_Name', 'City', 'Category', 'Price', 'Rating', 'Description']].sort_values('Rating', ascending=False)
 
 # Fungsi untuk Menampilkan Tempat Wisata Terpopuler
@@ -38,11 +44,11 @@ def popular_near_you(city, age):
 
 def gradio_interface():
 
-    # Rekomendasi Semua Tempat Populer
+   # Rekomendasi Semua Tempat Populer
     popular_table = gr.Interface(
         fn=place_popularity_all,
         inputs=None,
-        outputs=gr.Dataframe(headers=["Place Name", "City", "Rating", "Description"]),
+        outputs=gr.Dataframe(headers=["Place Name", "City", "Province", "Rating", "Description", "Total Visits"]),
         live=True,
         title="Wisata Terpopuler"
     )
@@ -56,10 +62,10 @@ def gradio_interface():
             gr.Number(label="Rating Minimal"),
             gr.CheckboxGroup(
                 label="Kategori Preferensi",
-                choices=df_places['Category'].unique().tolist()
+                choices=["All"] + df_places['Category'].unique().tolist()
             )
         ],
-        outputs=gr.Dataframe(headers=["Place Name", "City", "Category", "Price", "Rating"]),
+        outputs=gr.Dataframe(headers=["Place Name", "City", "Category", "Price", "Rating", "Description"]),
         live=True,
         title="Rekomendasi Wisata Berdasarkan Preferensi"
     )

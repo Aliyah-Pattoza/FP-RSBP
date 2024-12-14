@@ -2,12 +2,10 @@ import pandas as pd             # Untuk manipulasi dan analisis data I/O datafra
 import numpy as np              # Untuk operasi numerik dan komputasi
 import seaborn as sns           # Dibangun di atas plt, menyediakan visualisasi yang lebih menarik
 import warnings                 # Handling peringatan yang ditampilkan
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
 import os
 
 # Define the folder path where the CSV files are stored
-folder_path = "dataset"
+folder_path = "../dataset"
 
 # Load the CSV files
 df_user = pd.read_csv(os.path.join(folder_path, "user.csv"))
@@ -36,21 +34,6 @@ merged_rating_user = pd.merge(df_rating, df_user, on='User_Id')
 merged_with_places = pd.merge(merged_rating_user, df_places[['Place_Id', 'Category']], on='Place_Id')
 
 category_ratings = merged_with_places.groupby(['Age_Group', 'Category'])['Place_Ratings'].mean().reset_index()
-
-# # Pivot data untuk heatmap
-# heatmap_data = category_ratings.pivot(index='Age_Group', columns='Category', values='Place_Ratings')
-# sns.clustermap(
-#     heatmap_data,
-#     cmap='coolwarm',
-#     annot=True,
-#     fmt=".2f",
-#     linewidths=0.5,
-#     cbar_kws={'label': 'Average Rating'},
-#     figsize=(12, 8),
-#     method='ward'
-# )
-# plt.title('Average Rating of Categories by Age Group')
-# plt.show()
 
 merged_places_rating = pd.merge(df_rating, df_places, on='Place_Id')
 merged_places_rating.head()
