@@ -5,7 +5,7 @@ const Recommendations = () => {
   const [city, setCity] = useState("");
   const [budget, setBudget] = useState("");
   const [rating, setRating] = useState("");
-  const [category, setCategory] = useState("All"); // Tambahkan opsi default "All"
+  const [category, setCategory] = useState("All"); 
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ const Recommendations = () => {
 
     // Tentukan kategori
     const selectedCategories =
-      category === "All" ? ["Taman Hiburan", "Cagar Alam", "Tempat Ibadah"] : [category];
+      category === "All" ? ['Budaya', 'Taman Hiburan', 'Cagar Alam', 'Bahari', 'Pusat Perbelanjaan', 'Tempat Ibadah'] : [category];
 
     setLoading(true);
     try {
@@ -89,12 +89,14 @@ const Recommendations = () => {
           <option value="All">All</option>
           <option value="Taman Hiburan">Taman Hiburan</option>
           <option value="Cagar Alam">Cagar Alam</option>
+          <option value="Budaya">Budaya</option>
+          <option value="Bahari">Bahari</option>
+          <option value="Pusat Perbelanjaan">Pusat Perbelanjaan</option>
           <option value="Tempat Ibadah">Tempat Ibadah</option>
         </select>
         <button type="submit">Cari</button>
       </form>
 
-      <h2>Wisata Terdekat</h2>
       {loading ? (
         <p>Sedang memuat data...</p>
       ) : (

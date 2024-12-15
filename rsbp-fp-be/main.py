@@ -10,10 +10,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Ganti dengan domain frontend Anda untuk keamanan, contoh: ["http://localhost:3000"]
+    allow_origins=["*"],  
     allow_credentials=True,
-    allow_methods=["*"],  # Mengizinkan semua metode (GET, POST, OPTIONS, dll.)
-    allow_headers=["*"],  # Mengizinkan semua header
+    allow_methods=["*"],  
+    allow_headers=["*"],  
 )
 
 # Daftar Routers

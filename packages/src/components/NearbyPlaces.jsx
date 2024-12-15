@@ -10,66 +10,68 @@ const NearbyPlaces = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi input
-    if (!city.trim()) {
-      alert('Mohon masukkan kota Anda.');
-      return;
-    }
-    if (!age || isNaN(age) || age <= 0) {
-      alert('Usia harus berupa angka positif.');
+    if (!city.trim() || !age || isNaN(age) || age <= 0) {
+      alert('Masukkan kota dan usia yang valid.');
       return;
     }
 
     setLoading(true);
     try {
-      // Mengirim request POST ke endpoint
       const response = await apiClient.post('/near/places/near', {
         city,
         age: parseInt(age),
       });
 
-      // Menyimpan data yang diterima
-      if (response.data && response.data.length > 0) {
-        setPlaces(response.data);
-      } else {
-        alert('Tidak ada tempat wisata terdekat ditemukan.');
-        setPlaces([]);
-      }
+      setPlaces(response.data || []);
     } catch (error) {
       console.error('Error fetching nearby places:', error);
-      alert('Terjadi masalah saat mengambil data dari server.');
+      alert('Terjadi masalah saat mengambil data.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h1>Wisata Terdekat</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Kota Anda"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Usia Anda"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          required
-        />
-        <button type="submit">Cari</button>
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Wisata Terdekat</h1>
+
+      {/* Form Input */}
+      <form className="mb-4" onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="city" className="form-label">Kota Anda</label>
+          <input
+            type="text"
+            id="city"
+            className="form-control"
+            placeholder="Masukkan kota Anda"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="age" className="form-label">Usia Anda</label>
+          <input
+            type="number"
+            id="age"
+            className="form-control"
+            placeholder="Masukkan usia Anda"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary w-100">Cari</button>
       </form>
 
-      {loading ? (
-        <p>Sedang memuat data...</p>
-      ) : (
-        places.length > 0 && (
-          <table>
-            <thead>
+      {/* Indikator Loading */}
+      {loading && <div className="text-center mb-4">Sedang memuat data...</div>}
+
+      {/* Tabel Hasil */}
+      {places.length > 0 && (
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped">
+            <thead className="table-dark">
               <tr>
                 <th>Nama Tempat</th>
                 <th>Kota</th>
@@ -90,7 +92,12 @@ const NearbyPlaces = () => {
               ))}
             </tbody>
           </table>
-        )
+        </div>
+      )}
+
+      {/* Pesan jika tidak ada data */}
+      {!loading && places.length === 0 && (
+        <p className="text-center">Tidak ada tempat wisata ditemukan. Coba cari lagi.</p>
       )}
     </div>
   );
