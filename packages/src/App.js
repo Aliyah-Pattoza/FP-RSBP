@@ -14,6 +14,7 @@ function App() {
 
   return (
     <div>
+      {/* Navbar */}
       <nav className="navbar">
         <a href="#" className="navbar-brand">
           Tourism Recommendations
@@ -39,7 +40,10 @@ function App() {
           </button>
         </div>
       </nav>
+
+      {/* Main Content */}
       <div className="container mt-4">{renderPage()}</div>
+
     </div>
   );
 }
